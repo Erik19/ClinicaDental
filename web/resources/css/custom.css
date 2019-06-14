@@ -1,0 +1,32 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 10/06/2019, 02:20:09 PM
+    Author     : Erik
+*/
+
+.custom_button{
+    height: 40px;
+    float: right;
+}
+
+.botonF1{
+    width:60px;
+    height:60px;
+    border-radius:100%;
+    background:#F44336;
+    float: right;
+    border:none;
+    color:#FFF;
+    font-size:15px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+
+}
+
+.botonF1 > span{
+    padding: inherit;
+}
+

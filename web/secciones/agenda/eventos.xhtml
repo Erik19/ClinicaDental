@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="/templates/principal.xhtml">
+            <ui:define name="breadcrum">
+                <h:form>
+                    <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px">
+                        <p:menuitem value="Inicio" url="#"/>
+                        <p:menuitem value="Agenda" url="#" />
+                        <p:menuitem value="Eventos" url="#" />
+
+                    </p:breadCrumb>
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <h:form id="formAddEvent">
+                    <p:dialog widgetVar="evento" modal="true" header="Eventos"
+                              resizable="false" responsive="true" width="25%">
+                        <p:panelGrid columns="2" layout="grid" 
+                                     columnClasses="ui-grid-col-4, ui-grid-col-8"
+                                     styleClass="ui-panelgrid-blank, ui-noborder">
+
+                            <p:outputLabel value="Evento"/>
+                            <p:inputTextarea style="width: 100%" 
+                                             value="#{managedBeanEventos.evento.evento}"/>
+                            <p:outputLabel value="Estatus"/>
+                            <p:selectOneMenu style="width: 93%" 
+                                             value="#{managedBeanEventos.estatus}">
+                                <f:selectItem itemLabel="Seleccione una opción" 
+                                              itemValue="-1"/>
+                                <f:selectItem itemLabel="Activo" 
+                                              itemValue="true"/>
+                                <f:selectItem itemLabel="Inactivo" 
+                                              itemValue="false"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:commandButton value="Guardar" icon="fa fa-fw fa-save"
+                                             style="float: right;"
+                                             process="@this,formAddEvent:"
+                                             update="formEventos:tableEvents"
+                                             actionListener="#{managedBeanEventos.addEvent()}"
+                                             oncomplete="PF('evento').hide()"/>
+
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+                <h:form id="formEventos">
+                    <div style="margin: 0 auto; width: 50%">
+                        <p:dataTable var="ev" value="#{managedBeanEventos.listaEventos}"
+                                     id="tableEvents" reflow="true" rows="30" paginator="true">
+                            <p:column headerText="Descripción del evento">
+                                <p:outputLabel value="#{ev.evento}"/>
+                            </p:column>
+                            <p:column headerText="Estatus del evento">
+                                <p:outputLabel value="#{ev.estatusAsString}"/>
+                            </p:column>
+                            <p:column width="15%">
+                                <p:commandButton icon="fa fa-fw fa-edit"/>
+                                <p:commandButton icon="fa fa-fw fa-trash"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton class="botonF1" icon="fa fa-fw fa-plus"
+                                         onclick="PF('evento').show()"/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                    </div>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>
+

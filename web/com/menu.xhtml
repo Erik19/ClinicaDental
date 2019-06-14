@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition>
+            <h:form>  
+                <p:growl id="messages"/>
+
+                <p:menubar>
+                    <p:submenu label="Agenda" icon="fa fa-fw fa-calendar">
+                       
+                        <p:menuitem value="Consultar agenda" icon="fa fa-fw fa-list" url="/secciones/inicio.xhtml" />
+                        <p:separator />
+                        <p:menuitem value="Eventos" icon="fa fa-fw fa-tasks" url="/secciones/agenda/eventos.xhtml" />
+                        
+                    </p:submenu>
+
+                    <p:submenu label="Edit" icon="pi pi-pencil">
+                        <p:menuitem value="Undo" url="#" icon="pi pi-angle-double-left" />
+                        <p:menuitem value="Redo" url="#" icon="pi pi-angle-double-right" />
+                    </p:submenu>
+
+                    <p:submenu label="Help" icon="pi pi-question">
+                        <p:menuitem value="Contents" url="#" />
+                        <p:submenu label="Search" icon="pi pi-search">
+                            <p:submenu label="Text">
+                                <p:menuitem value="Workspace" url="#" />
+                            </p:submenu>
+                            <p:menuitem value="File" url="#" />
+                        </p:submenu>
+                    </p:submenu>
+
+                    <p:submenu label="Administración" icon="fa fa-fw fa-wrench">
+                        <p:menuitem value="Clinicas" icon="fa fa-fw fa-hospital-o" 
+                                    url="/secciones/administracion/adminClinica.xhtml"/>
+                        <p:menuitem value="Doctores" icon="fa fa-fw fa-user-md" 
+                                    url="/secciones/administracion/doctores/adminDoctores.xhtml"/>
+                        <p:menuitem value="Pacientes" icon="fa fa-fw fa-user"
+                                    url="/secciones/administracion/pacientes/adminPacientes.xhtml"/>
+                    </p:submenu>
+
+                    <f:facet name="options">
+                        <p:commandButton  value="Salir" icon="fa fa-fw fa-sign-out"
+                                          actionListener="#{managedBeanAcceso.logout()}" 
+                                          ajax="false"/>
+                    </f:facet>
+                </p:menubar>
+            </h:form>
+        </ui:composition>
+    </h:body>
+</html>
+
