@@ -1,0 +1,13 @@
+  <Resource auth="Container" 
+                  driverClassName="com.mysql.jdbc.Driver" 
+                  logAbandoned="true" 
+                  maxActive="4" 
+                  maxIdle="2" 
+                  maxWait="5000" 
+                  removeAbandoned="true" 
+                  removeAbandonedTimeout="60" 
+                  type="javax.sql.DataSource" 
+                  url="jdbc:mysql://localhost:3306/clinica?zeroDateTimeBehavior=convertToNull" 
+                  name="jdbc/clinica" 
+                  username="root"
+                  password="e4bhse12" />
