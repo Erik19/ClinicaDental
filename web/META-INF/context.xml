@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context path="/ClinicaDental">
-    <ResourceLink global="jdbc/clinica" name="jdbc/clinica" type="javax.sql.DataSource"/>
+  <ResourceLink global="jdbc/clinica" name="jdbc/clinica" type="javax.sql.DataSource"/>
 </Context>
