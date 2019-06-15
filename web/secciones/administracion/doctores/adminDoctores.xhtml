@@ -2,8 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
     </h:head>
@@ -19,33 +20,95 @@
                     </p:breadCrumb>
                 </h:form>
             </ui:define>
+            <ui:define name="controls">
+                <br/>
+                <div style="margin: 0 auto;width: 50%">
+                    <p:panelGrid columns="2" layout="grid" 
+                                 columnClasses="ui-grid-col-3, ui-grid-col-9"
+                                 styleClass="ui-panelgrid-blank, ui-noborder"
+                                 rendered="#{managedBeanDoctor.admingral}">
+                        <p:outputLabel value="Seleccione una clínica"/>
+                        <p:selectOneMenu>
+                            <f:selectItem itemLabel="Seleccione..." itemValue="-1"/>
+                            <f:selectItems var="cls" value="#{managedBeanClinica.listClinica}"
+                                           itemValue="#{cls.id}" itemLabel="#{cls.nombre}"/>
+                            <p:ajax event="change" process="@this"
+                                    listener="#{managedBeanDoctor.loadDoctor()}" update="data:tableClinica"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                </div>
+                <br/>
+            </ui:define>
             <ui:define name="content">
                 <h:form id="admin">
-                    
+                    <p:dialog widgetVar="admon" modal="true" header="Eventos"
+                              resizable="false" responsive="true" width="25%">
+                        <p:panelGrid columns="2" layout="grid" 
+                                     columnClasses="ui-grid-col-4, ui-grid-col-8"
+                                     styleClass="ui-panelgrid-blank, ui-noborder">
+
+                            <p:outputLabel value="Evento"/>
+                            <p:inputTextarea style="width: 100%" 
+                                             value="#{managedBeanEventos.evento.evento}"/>
+                            <p:outputLabel value="Estatus"/>
+                            <p:selectOneMenu style="width: 93%" 
+                                             value="#{managedBeanEventos.estatus}">
+                                <f:selectItem itemLabel="Seleccione una opción" 
+                                              itemValue="-1"/>
+                                <f:selectItem itemLabel="Activo" 
+                                              itemValue="true"/>
+                                <f:selectItem itemLabel="Inactivo" 
+                                              itemValue="false"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:commandButton value="Guardar" icon="fa fa-fw fa-save"
+                                             style="float: right;"
+                                             process="@this,admin:"
+                                             update="data:tableClinica"
+                                             actionListener="#{managedBeanClinica.addClinica()}"
+                                             oncomplete="PF('admon').hide()"/>
+
+                        </p:panelGrid>
+                    </p:dialog>
                 </h:form>
                 <h:form id="data">
-                    <p:dataTable var="dr" value="#{managedBeanEventos.listaEventos}"
-                                     id="tableEvents" reflow="true" rows="30" paginator="true">
-                            <p:column headerText="Descripción del evento">
-                                <p:outputLabel value="#{ev.evento}"/>
-                            </p:column>
-                            <p:column headerText="Estatus del evento">
-                                <p:outputLabel value="#{ev.estatusAsString}"/>
-                            </p:column>
-                            <p:column width="15%">
-                                <p:commandButton icon="fa fa-fw fa-edit"/>
-                                <p:commandButton icon="fa fa-fw fa-trash"/>
-                            </p:column>
-                        </p:dataTable>
-                        <br/>
-                        <p:commandButton class="botonF1" icon="fa fa-fw fa-plus"
-                                         onclick="PF('evento').show()"/>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
+                    <p:dataTable var="ld" value="#{managedBeanDoctor.listDoctor}"
+                                 id="tableClinica" reflow="true" rows="30" paginator="true">
+                        <p:column headerText="Nombre">
+                            <p:outputLabel value="#{ld.idPersona.completeName}"/>
+                        </p:column>
+                        <p:column headerText="Fecha de nacimiento">
+                            <p:outputLabel value="#{ld.idPersona.fechaNacimiento}"/>
+                        </p:column>
+                        <p:column headerText="Teléfono">
+                            <p:outputLabel value="#{ld.telefono}"/>
+                        </p:column>
+                        <p:column headerText="Otro contacto">
+                            <p:outputLabel value="#{ld.otroContacto}"/>
+                        </p:column>
+                        <p:column headerText="Cedula">
+                            <p:outputLabel value="#{ld.cedula}"/>
+                        </p:column>
+                        <p:column headerText="Fecha registro">
+                            <p:outputLabel value="#{ld.fechaRegistro}"/>
+                        </p:column>
+                        <p:column width="15%" headerText="Acciones" style="text-align: center;">
+                            <p:commandButton icon="fa fa-fw fa-edit"/>
+                            <p:commandButton icon="fa fa-fw fa-trash"/>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <p:commandButton class="botonF1" icon="fa fa-fw fa-plus"
+                                     actionListener="#{managedBeanDoctor.redirect()}"/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
                 </h:form>
-                
             </ui:define>
         </ui:composition>
     </h:body>

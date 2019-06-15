@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Doctor.findAll", query = "SELECT d FROM Doctor d")})
 public class Doctor implements Serializable {
 
-    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,11 +58,14 @@ public class Doctor implements Serializable {
     @Column(name = "FECHA_REGISTRO")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRegistro;
-     @JoinColumn(name = "ID_CLINICA", referencedColumnName = "ID")
+    @JoinColumn(name = "ID_CLINICA", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Clinica idClinica;
-    
-    
+    @Column(name = "TELEFONO")
+    private String telefono;
+    @Column(name = "OTRO_CONTACTO")
+    private String otroContacto;
+
     public Doctor() {
     }
 
@@ -149,16 +151,16 @@ public class Doctor implements Serializable {
     public String toString() {
         return "com.dental.beans.Doctor[ id=" + id + " ]";
     }
-    
-     public Date getFechaRegistro() {
+
+    public Date getFechaRegistro() {
         return fechaRegistro;
     }
 
     public void setFechaRegistro(Date fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
-    
-     /**
+
+    /**
      * @return the idClinica
      */
     public Clinica getIdClinica() {
@@ -170,6 +172,34 @@ public class Doctor implements Serializable {
      */
     public void setIdClinica(Clinica idClinica) {
         this.idClinica = idClinica;
+    }
+
+    /**
+     * @return the telefono
+     */
+    public String getTelefono() {
+        return telefono;
+    }
+
+    /**
+     * @param telefono the telefono to set
+     */
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    /**
+     * @return the otroContacto
+     */
+    public String getOtroContacto() {
+        return otroContacto;
+    }
+
+    /**
+     * @param otroContacto the otroContacto to set
+     */
+    public void setOtroContacto(String otroContacto) {
+        this.otroContacto = otroContacto;
     }
 
 }

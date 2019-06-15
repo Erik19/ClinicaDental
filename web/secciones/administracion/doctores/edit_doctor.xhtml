@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="/templates/principal.xhtml">
+            <ui:define name="breadcrum">
+                <h:form>
+                    <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px">
+                        <p:menuitem value="Inicio" url="#"/>
+                        <p:menuitem value="Administración" url="#" />
+                        <p:menuitem value="Doctores" url="#" />
+
+                    </p:breadCrumb>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="content">
+                <br/>
+                <div style="margin: 0 auto; width: 80%">
+                    <h:form enctype="multipart/form-data">
+
+                        <p:growl id="growl" sticky="true" showDetail="true"/>
+
+                        <p:wizard flowListener="#{managedBeanDoctor.onFlowProcess}" 
+                                  backLabel="Atrás" nextLabel="Siguiente">
+                            <p:tab id="personal" title="Personal">
+                                <p:panel header="Datos Personales">
+                                    <p:messages />
+                                    <p:panelGrid columns="2" layout="grid" id="pgAlta"
+                                                 columnClasses="ui-grid-col-2, ui-grid-col-4"
+                                                 styleClass="ui-panelgrid-blank, ui-noborder">
+
+                                        <p:outputLabel value="Nombre" for="itNombre"/>
+                                        <p:inputText value="#{managedBeanDoctor.persona.nombre}"
+                                                     required="true" id="itNombre"
+                                                     requiredMessage="El mombre es requerido"/>
+
+                                        <p:outputLabel value="Apellido paterno" for="itPaterno"/>
+                                        <p:inputText value="#{managedBeanDoctor.persona.apellidoPaterno}"
+                                                     required="true" id="itPaterno"
+                                                     requiredMessage="El apellido paterno es requerido"/>
+
+                                        <p:outputLabel value="Apellido materno" for="itMaterno"/>
+                                        <p:inputText value="#{managedBeanDoctor.persona.apellidoMaterno}"
+                                                     id="itMaterno"/>
+
+                                        <p:outputLabel value="Fecha de nacimiento" for="itFecha"/>
+                                        <p:calendar value="#{managedBeanDoctor.persona.fechaNacimiento}"
+                                                    required="true" id="itFecha"
+                                                    requiredMessage="La fecha de nacimiento es requerida"/>
+                                    </p:panelGrid>
+                                </p:panel>
+                                <br/>
+                            </p:tab>
+
+                            <p:tab id="address" title="Dirección">
+                                <p:panel header="Datos de Dirección">
+                                    <p:panelGrid columns="4" layout="grid"
+                                                 columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-2, ui-grid-col-4"
+                                                 styleClass="ui-panelgrid-blank, ui-noborder">
+
+                                        <p:outputLabel value="Calle"/>
+                                        <p:inputText value="#{managedBeanDoctor.direccion.calle}"/>
+                                        <p:outputLabel value="No. Interior"/>
+                                        <p:inputText value="#{managedBeanDoctor.direccion.noInt}"/>
+                                        
+                                        <p:outputLabel value="No. Exterior"/>
+                                        <p:inputText value="#{managedBeanDoctor.direccion.noExt}"/>
+                                        <p:outputLabel value="Colonia"/>
+                                        <p:inputText value="#{managedBeanDoctor.direccion.colonia}"/>
+
+                                        <p:outputLabel value="CP"/>
+                                        <p:inputText value="#{managedBeanDoctor.direccion.cp}"/>
+                                         <p:outputLabel value="País"/>
+                                        <p:selectOneMenu style="width: 94%" value="#{managedBeanDoctor.idPais}" filter="true"> 
+                                            <f:selectItem itemLabel="Seleccione..." itemValue="-1"/>
+                                            <f:selectItems var="pais" value="#{managedBeanDoctor.listPais}"
+                                                           itemValue="#{pais.id}" itemLabel="#{pais.pais}"/>
+                                            <p:ajax event="change" process="@this" update="itEdo"
+                                                    listener="#{managedBeanDoctor.loadEstados()}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Municipio"/>
+                                        <p:inputText value="#{managedBeanDoctor.direccion.municipio}"/>
+                                        <p:outputLabel value="Estado"/>
+                                        <p:selectOneMenu style="width: 94%" value="#{managedBeanDoctor.idEstado}" 
+                                                         id="itEdo" filter="true"> 
+                                            <f:selectItem itemLabel="Seleccione..." itemValue="-1"/>
+                                            <f:selectItems var="edo" value="#{managedBeanDoctor.listEstado}"
+                                                           itemValue="#{edo.id}" itemLabel="#{edo.estado}"/>
+                                        </p:selectOneMenu>
+                                       
+
+                                        <p:outputLabel value="Otras referencias"/>
+                                        <p:inputTextarea style="width: 100%" 
+                                                         value="#{managedBeanDoctor.direccion.otrasReferencias}"/>
+                                        <p:outputLabel/>
+                                        <p:outputLabel/>
+
+                                    </p:panelGrid>
+                                </p:panel>
+                            </p:tab>
+
+                            <p:tab id="contact" title="Contacto">
+                                <p:panel header="Información de Contacto">
+
+                                    <p:panelGrid columns="2" layout="grid"
+                                                 columnClasses="ui-grid-col-2, ui-grid-col-4"
+                                                 styleClass="ui-panelgrid-blank, ui-noborder">
+
+                                        <p:outputLabel value="Teléfono"/>
+                                        <p:inputText value="#{managedBeanDoctor.doctor.telefono}"/>
+                                        <p:outputLabel value="Otro contacto"/>
+                                        <p:inputTextarea style="width: 100%"
+                                                         value="#{managedBeanDoctor.doctor.otroContacto}"/>
+                                        <p:outputLabel/>
+                                        <p:outputLabel/>
+
+                                        <p:outputLabel value="Clínica de alta"/>
+                                        <p:selectOneMenu style="width: 94%" rendered="#{managedBeanDoctor.admingral}"
+                                                         value="#{managedBeanDoctor.idClinica}"
+                                                         required="true"> 
+                                            <f:selectItem itemLabel="Seleccione..." itemValue="-1"/>
+                                            <f:selectItems var="cls" value="#{managedBeanClinica.listClinica}"
+                                                           itemValue="#{cls.id}" itemLabel="#{cls.nombre}"/>
+                                        </p:selectOneMenu>
+                                    </p:panelGrid>
+
+                                </p:panel>
+                            </p:tab>
+                            
+                            <p:tab id="profesional" title="Profesional">
+                                <p:panel header="Datos profesionales">
+                                    <div style="margin: auto 0; width: 50%">
+                                        <p:panelGrid columns="2" layout="grid"
+                                                     columnClasses="ui-grid-col-2, ui-grid-col-10"
+                                                     styleClass="ui-panelgrid-blank, ui-noborder">
+                                            
+                                            <p:outputLabel value="Cédulla"/>
+                                            <p:inputText value="#{managedBeanDoctor.doctor.cedula}"/>
+                                            <p:outputLabel value="Título"/>
+                                            <p:inputText value="#{managedBeanDoctor.doctor.titulo}"/>
+                                            
+                                            <p:outputLabel value="Titulo dígital"/>
+                                            <p:fileUpload/>
+                                        </p:panelGrid>
+                                    </div>
+                                </p:panel>
+                            </p:tab>
+
+                            <p:tab id="confirm" title="Confirmación">
+                                <p:panel header="Confirmación">
+                                    <div style="margin: auto 0; width: 80%">
+                                        <p:panelGrid columns="2" layout="grid"
+                                                     columnClasses="ui-grid-col-2, ui-grid-col-10"
+                                                     styleClass="ui-panelgrid-blank, ui-noborder">
+
+                                            <p:outputLabel value="Nombre: "/>
+                                            <p:outputLabel value="#{managedBeanDoctor.persona.completeName}"/>
+
+                                            <p:outputLabel value="Dirección: "/>
+                                            <p:outputLabel value="#{managedBeanDoctor.direccion.completeAddres}"/>
+                                            <p:outputLabel value="País"/>
+                                            <p:outputLabel value="#{managedBeanDoctor.paisObj.pais}"/>
+
+                                            <p:outputLabel value="Estado"/>
+                                            <p:outputLabel value="#{managedBeanDoctor.estadoObj.estado}"/>
+
+                                            <p:outputLabel value="Teléfono"/>
+                                            <p:outputLabel value="#{managedBeanDoctor.doctor.telefono}"/>
+
+                                            <p:outputLabel value="Cédula"/>
+                                            <p:outputLabel value="#{managedBeanDoctor.doctor.cedula}"/>
+                                            
+                                            <p:outputLabel/>
+                                            <p:outputLabel/>
+                                            
+                                            <p:outputLabel/>
+                                            <p:commandButton value="Guardar" style="float: right" 
+                                                             actionListener="#{managedBeanDoctor.saveOrUpdate()}"/>
+
+                                        </p:panelGrid>
+                                    </div>
+
+
+                                </p:panel>
+                            </p:tab>
+                        </p:wizard>
+
+                    </h:form>
+                </div>
+
+            </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>
+
