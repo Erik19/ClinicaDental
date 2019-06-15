@@ -6,6 +6,7 @@
 package com.dental.mbeans;
 
 import com.dental.beans.Acceso;
+import com.dental.beans.Clinica;
 import com.dental.beans.Evento;
 import com.dental.dao.MasterDao;
 import java.io.Serializable;
@@ -70,6 +71,8 @@ public class ManagedBeanEventos implements Serializable {
     public void addEvent() {
 
         this.evento.setEstatus(estatus.equals("true"));
+        Clinica clin = acceso.getIdTipoAcceso().getIdPerfil().getIdClinica();
+        evento.setIdClinica(clin);
         masterDao.saveOrUpdate(evento);
         loadEvents();
     }
