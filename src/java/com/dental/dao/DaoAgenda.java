@@ -20,7 +20,7 @@ import org.hibernate.criterion.Restrictions;
  */
 public class DaoAgenda implements Serializable{
     
-    public List<Agenda> listaAgenda(int idDr, int idPx){
+    public List<Agenda> listaAgenda(int idDr, int idPx, int idClin){
         List<Agenda> res = new ArrayList<>();
         Session ss = HibernateUtil.getSession();
         try {
@@ -31,6 +31,7 @@ public class DaoAgenda implements Serializable{
             if(idPx != 0){
                 cr.add(Restrictions.eq("idPx.id", idPx));
             }
+            cr.add(Restrictions.eq("idPx.id", idPx));
         } catch (Exception e) {
             e.printStackTrace();
         }finally{

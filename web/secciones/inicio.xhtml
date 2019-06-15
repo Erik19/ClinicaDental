@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
     </h:head>
@@ -70,10 +71,12 @@
 
                     </h:panelGrid>
 
-                    <p:dialog widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
+                    <p:dialog widgetVar="eventDialog" header="Agenda">
                         <h:panelGrid id="eventDetails" columns="2">
-                            <p:outputLabel for="title" value="Titles:" />
-                            <p:inputText id="title" value="#{managedBeanAgenda.event.title}" required="true" />
+                            <p:outputLabel for="title" value="Evento" />
+                            <p:selectOneMenu>
+                                <f:selectItem value="#{managedBeanAgenda}"/>
+                            </p:selectOneMenu>
 
                             <p:outputLabel for="from" value="From:" />
                             <p:calendar id="from" value="#{managedBeanAgenda.event.startDate}" timeZone="GMT+2" pattern="dd/MM/yyyy HH:mm"/>

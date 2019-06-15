@@ -59,9 +59,12 @@ public class Agenda implements Serializable {
     @JoinColumn(name = "ID_PX", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Persona idPx;
-     @Basic(optional = true)
+    @Basic(optional = true)
     @Column(name = "NOTAS")
     private String notas;
+    @Basic(optional = false)
+    @Column(name = "ID_CLINICA")
+    private int idClinica;
 
     public Agenda() {
     }
@@ -171,5 +174,19 @@ public class Agenda implements Serializable {
     public void setNotas(String notas) {
         this.notas = notas;
     }
-    
+
+    /**
+     * @return the idClinica
+     */
+    public int getIdClinica() {
+        return idClinica;
+    }
+
+    /**
+     * @param idClinica the idClinica to set
+     */
+    public void setIdClinica(int idClinica) {
+        this.idClinica = idClinica;
+    }
+
 }
