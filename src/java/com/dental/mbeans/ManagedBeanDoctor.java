@@ -175,10 +175,17 @@ public class ManagedBeanDoctor {
 
     }
     
-    public void upload() {
+    public void upload() throws Exception {
         if(file != null) {
             doctor.setTituloPdf(file.getContents());
         }
+       
+       /* 
+        FileOutputStream f = new FileOutputStream(new File("cert.cert"));
+        f.write(aux);*/
+        
+        
+       
     }
 
     public void saveOrUpdate() {

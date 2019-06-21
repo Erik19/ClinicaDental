@@ -28,11 +28,11 @@
                                      columnClasses="ui-grid-col-4, ui-grid-col-8"
                                      styleClass="ui-panelgrid-blank, ui-noborder">
 
-                            <p:outputLabel value="Evento"/>
-                            <p:inputTextarea style="width: 100%" 
+                            <p:outputLabel value="Evento" for="evento"/>
+                            <p:inputTextarea id="evento" style="width: 100%" 
                                              value="#{managedBeanEventos.evento.evento}"/>
-                            <p:outputLabel value="Estatus"/>
-                            <p:selectOneMenu style="width: 93%" 
+                            <p:outputLabel for="estatus" value="Estatus"/>
+                            <p:selectOneMenu style="width: 93%" id="estatus"
                                              value="#{managedBeanEventos.estatus}">
                                 <f:selectItem itemLabel="Seleccione una opción" 
                                               itemValue="-1"/>

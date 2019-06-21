@@ -14,9 +14,11 @@ import com.dental.beans.Paciente;
 import com.dental.dao.DaoAgenda;
 import com.dental.dao.MasterDao;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -39,8 +41,8 @@ import org.primefaces.model.ScheduleModel;
 @ManagedBean
 @ViewScoped
 public class ManagedBeanAgenda implements Serializable {
-    
-       //Contexto
+
+    //Contexto
     private HttpServletRequest httpServletRequest;
     private FacesContext facesContext;
     private String appContext;
@@ -51,9 +53,9 @@ public class ManagedBeanAgenda implements Serializable {
     @lombok.Getter
     @lombok.Setter
     private List<Agenda> listAgenda;
-    @lombok.Setter
     @lombok.Getter
-    private Agenda agenda;
+    @lombok.Setter
+    private Agenda agendaObj;
     private Doctor doctor;
     private Paciente px;
     private Evento evento;
@@ -71,34 +73,48 @@ public class ManagedBeanAgenda implements Serializable {
     private List<Doctor> listDoctor;
 
     private MasterDao masterDao;
-
+    @lombok.Getter
+    @lombok.Setter
     private int idPx;
+    @lombok.Getter
+    @lombok.Setter
     private int idDr;
-    
+
     @lombok.Getter
     @lombok.Setter
     private int idClinica;
     private String rol;
+    @lombok.Getter
+    @lombok.Setter
+    private int idEvento;
+    @lombok.Getter
+    @lombok.Setter
+    private boolean admingral = false;
 
     public ManagedBeanAgenda() {
         daoAgenda = new DaoAgenda();
         masterDao = new MasterDao();
-        agenda = new Agenda();
+        agendaObj = new Agenda();
         doctor = new Doctor();
+        evento = new Evento();
         px = new Paciente();
-        
+
         httpServletRequest = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         appContext = httpServletRequest.getContextPath();
         HttpSession httpSession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
         acceso = (Acceso) httpSession.getAttribute("acceso");
         rol = (String) httpSession.getAttribute("rol");
+        admingral = rol.equalsIgnoreCase("admingral");
+        idClinica = acceso.getIdTipoAcceso().getIdPerfil().getIdClinica().getId();
+        idDr = acceso.getIdTipoAcceso().getIdUsuario();
+
     }
 
     @PostConstruct
     public void init() {
-        listAgenda = daoAgenda.listaAgenda(idPx, idDr, idClinica);
+        listAgenda = daoAgenda.listaAgenda(idDr, idClinica);
         this.loadEvents();
-
+        this.loadData();
     }
 
     public void loadEvents() {
@@ -107,37 +123,27 @@ public class ManagedBeanAgenda implements Serializable {
             public void loadEvents(Date start, Date end) {
                 listAgenda.forEach(e -> {
                     addEvent(new DefaultScheduleEvent(e.getIdEvento().getEvento(),
-                            e.getFechaInicio(), e.getFechaFin()));
+                            e.getFechaInicio(), e.getFechaFin(), e));
                 });
             }
         };
+
     }
 
     public void loadData() {
         try {
+            agendaObj.setFechaInicio(new Date());
+            agendaObj.setFechaFin(new Date());
             listDoctor = masterDao.listObject(doctor, "idClinica.id", idClinica);
             listEvento = masterDao.listObject(evento, "idClinica.id", idClinica);
             listPacientes = masterDao.listObject(px, "idClinica.id", idClinica);
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public ScheduleModel getLazyEventModel() {
         return lazyEventModel;
-    }
-
-    public Date getInitialDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(calendar.get(Calendar.YEAR), Calendar.FEBRUARY, calendar.get(Calendar.DATE), 0, 0, 0);
-
-        return calendar.getTime();
-    }
-
-    private Calendar today() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
-
-        return calendar;
     }
 
     public ScheduleEvent getEvent() {
@@ -148,7 +154,36 @@ public class ManagedBeanAgenda implements Serializable {
         this.event = event;
     }
 
+    public void saveEvent() {
+
+        Optional<Paciente> auxPx = listPacientes.stream().
+                filter(i -> i.getId().equals(idPx)).findAny();
+        Optional<Doctor> auxDr = listDoctor.stream().
+                filter(i -> i.getId().equals(idDr)).findAny();
+        Optional<Evento> auxEv = listEvento.stream().
+                filter(i -> i.getId().equals(idEvento)).findAny();
+
+        agendaObj.setIdDr(auxDr.get());
+        agendaObj.setIdEvento(auxEv.get());
+        agendaObj.setIdPx(auxPx.get());
+        agendaObj.setIdClinica(idClinica);
+        agendaObj.setEstatus(1);
+
+        if (masterDao.saveOrUpdate(agendaObj)) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                    "Paciente agendado exitosamente", null));
+            lazyEventModel.clear();
+            lazyEventModel.getEvents().clear();
+            loadEvents();
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                    "Ocurrio un error al agendar al paciente", null));
+        }
+
+    }
+
     public void addEvent() {
+
         if (event.getId() == null) {
             lazyEventModel.addEvent(event);
         } else {
@@ -159,27 +194,47 @@ public class ManagedBeanAgenda implements Serializable {
     }
 
     public void onEventSelect(SelectEvent selectEvent) {
+        agendaObj = new Agenda();
         event = (ScheduleEvent) selectEvent.getObject();
+        agendaObj = (Agenda) event.getData();
+        idDr = agendaObj.getIdDr().getId();
+        idPx = agendaObj.getIdPx().getId();
+        idEvento = agendaObj.getIdEvento().getId();
+        System.out.println("evento: " + agendaObj.getIdEvento().getEvento());
+        System.out.println("fecha: " + agendaObj.getFechaInicio());
     }
 
     public void onDateSelect(SelectEvent selectEvent) {
+        agendaObj = new Agenda();
         event = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
+        Date d = (Date) selectEvent.getObject();
+        agendaObj.setFechaInicio(d);
+        agendaObj.setFechaFin(d);
     }
 
     public void onEventMove(ScheduleEntryMoveEvent event) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event moved", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
-
-        addMessage(message);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event actualizado", "Días movido:" + event.getDayDelta());
+        updateEvent(event.getScheduleEvent(), message);
     }
 
     public void onEventResize(ScheduleEntryResizeEvent event) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
-
-        addMessage(message);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Minutos movido:" + event.getMinuteDelta());
+        updateEvent(event.getScheduleEvent(), message);
     }
 
     private void addMessage(FacesMessage message) {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
+    public void updateEvent(ScheduleEvent scEvent, FacesMessage message) {
+        agendaObj = new Agenda();
+        agendaObj = (Agenda) scEvent.getData();
+        agendaObj.setFechaInicio(scEvent.getStartDate());
+        agendaObj.setFechaFin(scEvent.getEndDate());
+        
+        System.out.println("fecha fin: " + scEvent.getEndDate());
+        masterDao.saveOrUpdate(agendaObj);
+
+        addMessage(message);
+    }
 }

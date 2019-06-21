@@ -19,6 +19,26 @@
                     </p:breadCrumb>
                 </h:form>
             </ui:define>
+            
+            <ui:define name="controls">
+                <br/>
+                <div style="margin: 0 auto;width: 50%">
+                    <p:panelGrid columns="2" layout="grid" 
+                                 columnClasses="ui-grid-col-3, ui-grid-col-9"
+                                 styleClass="ui-panelgrid-blank, ui-noborder"
+                                 rendered="#{managedBeanAgenda.admingral}">
+                        <p:outputLabel value="Seleccione una clínica"/>
+                        <p:selectOneMenu value="#{managedBeanAgenda.idClinica}">
+                            <f:selectItem itemLabel="Seleccione..." itemValue="-1"/>
+                            <f:selectItems var="cls" value="#{managedBeanClinica.listClinica}"
+                                           itemValue="#{cls.id}" itemLabel="#{cls.nombre}"/>
+                            <p:ajax event="change" process="@this"
+                                    listener="#{managedBeanAgenda.loadEvents()}" update="formData:schedule"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                </div>
+                <br/>
+            </ui:define>
 
             <ui:define name="content">
 
@@ -45,7 +65,7 @@
                         minuteText: 'Minuto',
                         secondText: 'Segundo',
                         currentText: 'Fecha actual',
-                        ampm: false,
+                        ampm: true,
                         month: 'Mes',
                         week: 'Semana',
                         day: 'Día',
@@ -53,17 +73,76 @@
                     };
 
                 </script>
-                <h1>Bienvenido #{managedBeanAcceso.usuario}</h1>
+                <h:form id="formAdmin">
+                     <p:growl id="msg" showDetail="true" />
+                    <p:dialog widgetVar="eventoDialog" header="Agenda" modal="true" 
+                              resizable="false" responsive="true" width="30%">
+                        <p:panelGrid layout="grid" columns="2"
+                                     columnClasses="ui-grid-col-4, ui-grid-col-8"
+                                     styleClass="ui-panelgrid-blank, ui-noborder">
+                            <p:outputLabel for="nomEvento" value="Evento:" />
+                            <p:selectOneMenu id="nomEvento" style="width: 92%" filter="true"
+                                             value="#{managedBeanAgenda.idEvento}">
+                                <f:selectItem itemLabel="Seleccione una opción" itemValue="-1"/>
+                                <f:selectItems value="#{managedBeanAgenda.listEvento}" 
+                                               var="ev" itemLabel="#{ev.evento}" 
+                                               itemValue="#{ev.id}"/>
+                            </p:selectOneMenu>
+                             <p:outputLabel for="px" value="Paciente:" />
+                            <p:selectOneMenu id="px" style="width: 92%" filter="true"
+                                             value="#{managedBeanAgenda.idPx}">
+                                <f:selectItem itemLabel="Seleccione una opción" itemValue="-1"/>
+                                <f:selectItems value="#{managedBeanAgenda.listPacientes}" 
+                                               var="pc" itemLabel="#{pc.idPersona.completeName}" 
+                                               itemValue="#{pc.id}"/>
+                            </p:selectOneMenu>
 
-                <h:form>
+                            <p:outputLabel for="doc" value="Doctor:" />
+                            <p:selectOneMenu id="doc" style="width: 92%" filter="true"
+                                             value="#{managedBeanAgenda.idDr}">
+                                <f:selectItem itemLabel="Seleccione una opción" itemValue="-1"/>
+                                <f:selectItems value="#{managedBeanAgenda.listDoctor}" 
+                                               var="doc" itemLabel="#{doc.idPersona.completeName}" 
+                                               itemValue="#{doc.id}"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="from" value="Fecha inicio:" />
+                            <p:calendar id="from" value="#{managedBeanAgenda.agendaObj.fechaInicio}" timeZone="GMT-5" pattern="dd-MM-yyyy HH:mm"/>
+
+                            <p:outputLabel for="to" value="Fecha fin:" />
+                            <p:calendar id="to" value="#{managedBeanAgenda.agendaObj.fechaFin}" timeZone="GMT-5" pattern="dd-MM-yyyy HH:mm"/>
+
+                            <p:outputLabel value="Comentarios: " for="comentarios"/>
+                            <p:inputTextarea id="comentarios" style="width: 99%" value="#{managedBeanAgenda.agendaObj.notas}"/>
+
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:outputLabel/>
+                            <p:column colspan="2" style="float: right">
+                            <p:commandButton type="reset" value="Limpiar" />
+                            <p:commandButton value="Guardar" style="float: right"
+                                             process="@this,formAdmin:"
+                                             update="msg,formData:schedule"
+                                             action="#{managedBeanAgenda.saveEvent()}"/>
+                            </p:column>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+                <h1>Bienvenidos #{managedBeanAcceso.usuario}</h1>
+
+                <h:form id="formData">
                     <p:growl id="messages" showDetail="true" />
 
                     <h:panelGrid columnClasses="value">
                         <h3 style="margin-top: 0">Editable Schedule</h3>
-                        <p:schedule id="schedule" value="#{managedBeanAgenda.lazyEventModel}" widgetVar="myschedule" locale="es">
+                        <p:schedule id="schedule" value="#{managedBeanAgenda.lazyEventModel}" 
+                                    widgetVar="myschedule" timeZone="GMT-5" clientTimeZone="local" locale="es">
 
-                            <p:ajax event="dateSelect" listener="#{managedBeanAgenda.onDateSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
-                            <p:ajax event="eventSelect" listener="#{managedBeanAgenda.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();" />
+                            <p:ajax event="dateSelect" listener="#{managedBeanAgenda.onDateSelect}" update="formAdmin" oncomplete="PF('eventoDialog').show();" />
+                            <p:ajax event="eventSelect" listener="#{managedBeanAgenda.onEventSelect}" update="formAdmin" oncomplete="PF('eventoDialog').show();" />
                             <p:ajax event="eventMove" listener="#{managedBeanAgenda.onEventMove}" update="messages" />
                             <p:ajax event="eventResize" listener="#{managedBeanAgenda.onEventResize}" update="messages" />
 
@@ -71,26 +150,7 @@
 
                     </h:panelGrid>
 
-                    <p:dialog widgetVar="eventDialog" header="Agenda">
-                        <h:panelGrid id="eventDetails" columns="2">
-                            <p:outputLabel for="title" value="Evento" />
-                            <p:selectOneMenu>
-                                <f:selectItem value="#{managedBeanAgenda}"/>
-                            </p:selectOneMenu>
 
-                            <p:outputLabel for="from" value="From:" />
-                            <p:calendar id="from" value="#{managedBeanAgenda.event.startDate}" timeZone="GMT+2" pattern="dd/MM/yyyy HH:mm"/>
-
-                            <p:outputLabel for="to" value="To:" />
-                            <p:calendar id="to" value="#{managedBeanAgenda.event.endDate}" timeZone="GMT+2" pattern="dd/MM/yyyy HH:mm"/>
-
-                            <p:outputLabel for="allDay" value="All Day:" />
-                            <h:selectBooleanCheckbox id="allDay" value="#{managedBeanAgenda.event.allDay}" />
-
-                            <p:commandButton type="reset" value="Reset" />
-                            <p:commandButton id="addButton" value="Save" action="#{managedBeanAgenda.addEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
-                        </h:panelGrid>
-                    </p:dialog>    
                 </h:form>
             </ui:define>
 

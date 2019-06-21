@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="/templates/principal.xhtml">
+            <ui:define name="breadcrum">
+                <h:form>
+                    <p:breadCrumb class="breadcrumbStyle" style="padding: 1px 1px 1px 1px">
+                        <p:menuitem value="Inicio" url="#"/>
+                        <p:menuitem value="Clinicas" url="#" />
+                        <p:menuitem value="Editar/crear clínica" url="#" />
+
+                    </p:breadCrumb>
+                </h:form>
+            </ui:define>
+            <ui:define name="content">
+                <br/>
+                <div style="margin: 0 auto; width: 80%">
+                    <h:form>
+                        <p:wizard flowListener="#{managedBeanClinica.onFlowProcess}" 
+                                  backLabel="Atrás" nextLabel="Siguiente">
+                            <p:tab id="personal" title="Datos generales">
+                                <p:panel header="Datos de la clínica">
+                                    <p:messages />
+                                    <p:panelGrid columns="2" layout="grid" id="pgAlta"
+                                                 columnClasses="ui-grid-col-2, ui-grid-col-4"
+                                                 styleClass="ui-panelgrid-blank, ui-noborder">
+
+                                        <p:outputLabel value="Nombre" for="itNombre"/>
+                                        <p:inputText value="#{managedBeanClinica.clinica.nombre}"
+                                                     required="true" id="itNombre"
+                                                     requiredMessage="El mombre es requerido"/>
+
+                                        <p:outputLabel value="Responsable" for="itResponsable"/>
+                                        <p:inputText value="#{managedBeanClinica.clinica.responsable}"
+                                                     required="true" id="itResponsable"
+                                                     requiredMessage="El responsable es requerido"/>
+
+                                        <p:outputLabel value="Teléfono" for="itTel"/>
+                                        <p:inputText id="itTel" value="#{managedBeanClinica.clinica.telefono}" required="true"
+                                                     requiredMessage="El teléfono es requerido"/>
+
+                                        <p:outputLabel value="Texto adicional" for="itText"/>
+                                        <p:inputTextarea id="itText" value="#{managedBeanClinica.clinica.otroTexto}" style="width: 100%" />
+
+                                        <p:outputLabel value="Sitio web" for="itWeb"/>
+                                        <p:inputText id="itWeb" value="#{managedBeanClinica.clinica.sitioWeb}"/>
+
+                                        <p:outputLabel value="Logo"/>
+                                        <p:fileUpload fileUploadListener="#{managedBeanClinica.handleFileUpload}" mode="advanced"
+                                                      sizeLimit="100000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"/>
+
+                                    </p:panelGrid>
+                                </p:panel>
+                                <br/>
+                            </p:tab>
+
+                            <p:tab id="address" title="Dirección">
+                                <p:panel header="Datos de Dirección">
+                                     <p:messages />
+                                    <p:panelGrid columns="4" layout="grid"
+                                                 columnClasses="ui-grid-col-2, ui-grid-col-4,ui-grid-col-2, ui-grid-col-4"
+                                                 styleClass="ui-panelgrid-blank, ui-noborder">
+                                       
+                                        <p:outputLabel value="Calle"/>
+                                        <p:inputText value="#{managedBeanClinica.direccion.calle}"/>
+                                        <p:outputLabel value="No. Interior"/>
+                                        <p:inputText value="#{managedBeanClinica.direccion.noInt}"/>
+
+                                        <p:outputLabel value="No. Exterior"/>
+                                        <p:inputText value="#{managedBeanClinica.direccion.noExt}"/>
+                                        <p:outputLabel value="Colonia"/>
+                                        <p:inputText value="#{managedBeanClinica.direccion.colonia}"/>
+
+                                        <p:outputLabel value="CP" for="cp"/>
+                                        <p:inputText value="#{managedBeanClinica.direccion.cp}" id="cp"/>
+                                        <p:outputLabel value="País" for="pais"/>
+                                        <p:selectOneMenu style="width: 94%" value="#{managedBeanClinica.idPais}" id="pais"
+                                                         filter="true" required="true" requiredMessage="El país es necesario"> 
+                                            <f:selectItem itemLabel="Seleccione..." itemValue="-1" noSelectionOption="true"/>
+                                            <f:selectItems var="pais" value="#{managedBeanClinica.listPais}"
+                                                           itemValue="#{pais.id}" itemLabel="#{pais.pais}"/>
+                                            <p:ajax event="change" process="@this" update="itEdo"
+                                                    listener="#{managedBeanClinica.loadEstados()}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Municipio"/>
+                                        <p:inputText value="#{managedBeanClinica.direccion.municipio}"/>
+                                        <p:outputLabel value="Estado" for="itEdo"/>
+                                        <p:selectOneMenu style="width: 94%" value="#{managedBeanClinica.idEstado}" 
+                                                         id="itEdo" filter="true" required="true" requiredMessage="El estado es necesario"> 
+                                            <f:selectItem itemLabel="Seleccione..." itemValue="-1" noSelectionOption="true"/>
+                                            <f:selectItems var="edo" value="#{managedBeanClinica.listEstado}"
+                                                           itemValue="#{edo.id}" itemLabel="#{edo.estado}"/>
+                                        </p:selectOneMenu>
+
+
+                                        <p:outputLabel value="Otras referencias"/>
+                                        <p:inputTextarea style="width: 100%" 
+                                                         value="#{managedBeanClinica.direccion.otrasReferencias}"/>
+                                        <p:outputLabel/>
+                                        <p:outputLabel/>
+
+                                    </p:panelGrid>
+                                </p:panel>
+                            </p:tab>
+                            <p:tab id="confirm" title="Confirmación">
+                                <p:panel header="Confirmación">
+                                    <div style="margin: auto 0; width: 80%">
+                                        <p:panelGrid columns="2" layout="grid"
+                                                     columnClasses="ui-grid-col-2, ui-grid-col-10"
+                                                     styleClass="ui-panelgrid-blank, ui-noborder">
+
+                                            <p:outputLabel value="Nombre: "/>
+                                            <p:outputLabel value="#{managedBeanClinica.clinica.nombre}"/>
+
+                                            <p:outputLabel value="Dirección: "/>
+                                            <p:outputLabel value="#{managedBeanClinica.direccion.completeAddres}"/>
+                                            <p:outputLabel value="País"/>
+                                            <p:outputLabel value="#{managedBeanClinica.paisObj.pais}"/>
+
+                                            <p:outputLabel value="Estado"/>
+                                            <p:outputLabel value="#{managedBeanClinica.estadoObj.estado}"/>
+
+                                            <p:outputLabel value="Teléfono"/>
+                                            <p:outputLabel value="#{managedBeanClinica.clinica.telefono}"/>
+
+                                            <p:outputLabel value="Sitio web"/>
+                                            <p:outputLabel value="#{managedBeanClinica.clinica.sitioWeb}"/>
+
+                                            <p:outputLabel/>
+                                            <p:outputLabel/>
+
+                                            <p:outputLabel/>
+                                            <p:commandButton value="Guardar" style="float: right" 
+                                                             actionListener="#{managedBeanClinica.addClinica()}"/>
+
+                                        </p:panelGrid>
+                                    </div>
+
+
+                                </p:panel>
+                            </p:tab>
+                        </p:wizard>
+
+                    </h:form>
+                </div>
+
+            </ui:define>
+
+        </ui:composition>
+    </h:body>
+</html>
+

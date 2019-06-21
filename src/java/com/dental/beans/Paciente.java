@@ -55,6 +55,10 @@ public class Paciente implements Serializable {
     @JoinColumn(name = "ID_CLINICA", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Clinica idClinica;
+     @Basic(optional = false)
+    @Column(name = "ESTATUS")
+     private boolean estatus;
+    
 
     public Paciente() {
     }
@@ -148,5 +152,19 @@ public class Paciente implements Serializable {
      */
     public void setIdClinica(Clinica idClinica) {
         this.idClinica = idClinica;
+    }
+
+    /**
+     * @return the estatus
+     */
+    public boolean isEstatus() {
+        return estatus;
+    }
+
+    /**
+     * @param estatus the estatus to set
+     */
+    public void setEstatus(boolean estatus) {
+        this.estatus = estatus;
     }
 }

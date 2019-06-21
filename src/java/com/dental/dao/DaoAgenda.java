@@ -18,27 +18,22 @@ import org.hibernate.criterion.Restrictions;
  *
  * @author Erik
  */
-public class DaoAgenda implements Serializable{
-    
-    public List<Agenda> listaAgenda(int idDr, int idPx, int idClin){
+public class DaoAgenda implements Serializable {
+
+    public List<Agenda> listaAgenda(int idDr, int idClin) {
         List<Agenda> res = new ArrayList<>();
         Session ss = HibernateUtil.getSession();
         try {
             Criteria cr = ss.createCriteria(Agenda.class);
-            if(idDr != 0){
-                cr.add(Restrictions.eq("idDr.id", idDr));
-            }
-            if(idPx != 0){
-                cr.add(Restrictions.eq("idPx.id", idPx));
-            }
-            cr.add(Restrictions.eq("idPx.id", idPx));
+            cr.add(Restrictions.eq("idDr.id", idDr));
+            cr.add(Restrictions.eq("idClinica", idClin));
+            res = cr.list();
         } catch (Exception e) {
             e.printStackTrace();
-        }finally{
+        } finally {
             HibernateUtil.close(ss);
         }
         return res;
     }
-    
-   
+
 }
